@@ -4,26 +4,22 @@ import Card from '../components/Card';
 import CustomButton from '../components/CustomButton';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useQuizContext } from '../providers/QuizProvider';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useTimer } from '../hooks/useTimer';
+
 
 export default function QuizScreen() {
   const {question, questionIndex, onNext, score, bestScore, totalQuestions} = useQuizContext();
-  const [time, setTime] = useState(20);
+  const {time, startTimer, clearTimer} = useTimer(20);
 
   useEffect(() => {
-    // start countdown
-    setTime(20);
-
-    const interval = setInterval(() => {
-      setTime((t) => t - 1)
-    }, 1000);
+    startTimer();
 
     return () => {
-      clearInterval(interval)
+      clearTimer();
     }
-
-  }, [question]);
-
+  }, [question])
+ 
   useEffect(() => {
     if(time <= 0) {
       onNext();
@@ -43,7 +39,7 @@ export default function QuizScreen() {
           question ? (
             <View>
               <QuestionCard question={question}/>
-              <Text style={styles.time}>{time} sec</Text>
+              <Text style={styles.time} onPress={clearTimer}>{time} sec</Text>
             </View>
           ) : (
             <Card title='Well done'>
