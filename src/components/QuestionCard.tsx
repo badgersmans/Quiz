@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import React from 'react'
+import {useState} from 'react'
 import AnswerOption from './AnswerOption'
 import { Question } from '../types'
 import Card from './Card'
@@ -9,10 +9,10 @@ type QuestionCard = {
 }
 
 export default function QuestionCard({ question }: QuestionCard) {
-
-    const selectedOption = question.options[2];
+    const [selectedOption, setSelectedOption] = useState<string | undefined>();
 
     const onOptionSelected = (option: string) => {
+        setSelectedOption(option)
         console.log("selected", option)
     }
 

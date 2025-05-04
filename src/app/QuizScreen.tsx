@@ -1,14 +1,20 @@
 import { View, StyleSheet, Text, SafeAreaView } from 'react-native'
-import React from 'react'
+import {useState} from 'react'
 import QuestionCard from '../components/QuestionCard'
 import questions from '../questions';
 import Card from '../components/Card';
 import CustomButton from '../components/CustomButton';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
-const question = questions[1]; 
 
 export default function QuizScreen() {
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const question = questions[questionIndex]; 
+
+  const onNext = () => {
+    setQuestionIndex(questionIndex + 1);
+  }
+
   return (
     <SafeAreaView style={styles.page}>
       <View style={styles.container}>
@@ -37,7 +43,7 @@ export default function QuizScreen() {
           rightIcon= {
             <FontAwesome6 name="arrow-right-long" size={16} color="white" />
           }
-          onPress={() => console.log('pressed')}
+          onPress={onNext }
           onLongPress={() => console.log("long pressed")}
         />
       </View>
