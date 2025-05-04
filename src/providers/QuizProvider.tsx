@@ -1,6 +1,7 @@
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
 import questions from '../questions';
 import { Question } from '../types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type QuizContext = {
     question?: Question;
@@ -15,14 +16,14 @@ type QuizContext = {
 
 const QuizContext = createContext<QuizContext>({
     questionIndex: 0,
-    onNext: () => {},
-    setSelectedOption: () => {},
+    onNext: () => { },
+    setSelectedOption: () => { },
     score: 0,
     bestScore: 0,
     totalQuestions: 0,
 });
 
-export default function QuizProvider({children}: PropsWithChildren) {
+export default function QuizProvider({ children }: PropsWithChildren) {
     const [questionIndex, setQuestionIndex] = useState(1);
     const [selectedOption, setSelectedOption] = useState<string | undefined>();
     const [score, setScore] = useState(0);
@@ -32,10 +33,15 @@ export default function QuizProvider({children}: PropsWithChildren) {
     const isFinished = questionIndex >= questions.length;
 
     useEffect(() => {
+        loadBestScore();
+    }, [])
+
+    useEffect(() => {
         console.log('check best score isFinished', isFinished)
         // check if there is a new best score
-        if(isFinished === true && score > bestScore) {
-            setBestScore(score)
+        if (isFinished === true && score > bestScore) {
+            setBestScore(score);
+            saveBestScore(score);
         }
     }, [isFinished]);
 
@@ -47,13 +53,13 @@ export default function QuizProvider({children}: PropsWithChildren) {
 
     const onNext = () => {
         //if game finished, restart the game
-        if(isFinished) {
+        if (isFinished) {
             restart();
             return;
         }
 
         // check if answer is correct
-        if(selectedOption === question?.correctAnswer) {
+        if (selectedOption === question?.correctAnswer) {
             setScore((currScore) => currScore + 1)
         }
 
@@ -61,21 +67,40 @@ export default function QuizProvider({children}: PropsWithChildren) {
     }
     // console.log("score is? ", score)
 
-  return (
-    <QuizContext.Provider value={{
-        question, 
-        questionIndex, 
-        onNext, 
-        selectedOption, 
-        setSelectedOption,
-        score,
-        bestScore,
-        totalQuestions: questions.length
-    }}
-    >
-        {children}
-    </QuizContext.Provider>
-  )
+    const saveBestScore = async (value: number) => {
+        try {
+            await AsyncStorage.setItem('best-score', value.toString());
+        } catch (e) {
+            // saving error
+        }
+    }
+
+    const loadBestScore = async () => {
+        try {
+            const value = await AsyncStorage.getItem('best-score');
+            if (value !== null) {
+                setBestScore(Number.parseInt(value))
+            }
+        } catch (e) {
+            // error reading value
+        }
+    }
+
+    return (
+        <QuizContext.Provider value={{
+            question,
+            questionIndex,
+            onNext,
+            selectedOption,
+            setSelectedOption,
+            score,
+            bestScore,
+            totalQuestions: questions.length
+        }}
+        >
+            {children}
+        </QuizContext.Provider>
+    )
 }
 
 export const useQuizContext = () => useContext(QuizContext);
