@@ -1,26 +1,19 @@
 import { View, StyleSheet, Text, SafeAreaView } from 'react-native'
-import {useState} from 'react'
 import QuestionCard from '../components/QuestionCard'
-import questions from '../questions';
 import Card from '../components/Card';
 import CustomButton from '../components/CustomButton';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-
+import { useQuizContext } from '../providers/QuizProvider';
 
 export default function QuizScreen() {
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const question = questions[questionIndex]; 
-
-  const onNext = () => {
-    setQuestionIndex(questionIndex + 1);
-  }
-
+  const {question, questionIndex, onNext, score, totalQuestions} = useQuizContext();
+ 
   return (
     <SafeAreaView style={styles.page}>
       <View style={styles.container}>
         {/* Header */}
         <View>
-          <Text style={styles.title}>Question 1/5</Text>
+          <Text style={styles.title}>Question {questionIndex}/{totalQuestions}</Text>
         </View>
 
         {/* Body */}
@@ -32,7 +25,7 @@ export default function QuizScreen() {
             </View>
           ) : (
             <Card title='Well done'>
-              <Text>Best score 3/5</Text>
+              <Text>Best score {score}/{totalQuestions}</Text>
             </Card>
           )
         }
@@ -43,7 +36,7 @@ export default function QuizScreen() {
           rightIcon= {
             <FontAwesome6 name="arrow-right-long" size={16} color="white" />
           }
-          onPress={onNext }
+          onPress={onNext}
           onLongPress={() => console.log("long pressed")}
         />
       </View>
