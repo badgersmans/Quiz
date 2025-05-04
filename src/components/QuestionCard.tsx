@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import AnswerOption from './AnswerOption'
 import { Question } from '../types'
 import Card from './Card'
@@ -9,6 +9,15 @@ type QuestionCard = {
 }
 
 export default function QuestionCard({ question }: QuestionCard) {
+    useEffect(() => {
+        console.log('question card mounted...')
+
+        return () => {
+            console.log('question card UNmounted')
+        }
+    }, [])
+
+    console.log('question card rendered...')
     return (
         <Card title={question.title}>
             <View style={{ gap: 10 }}>
