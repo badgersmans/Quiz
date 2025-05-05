@@ -6,14 +6,14 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useQuizContext } from '../providers/QuizProvider';
 import { useEffect } from 'react';
 import { useTimer } from '../hooks/useTimer';
-
+import LottieView from 'lottie-react-native';
 
 export default function QuizScreen() {
   const {question, questionIndex, onNext, score, bestScore, totalQuestions} = useQuizContext();
   const {time, startTimer, clearTimer} = useTimer(20);
 
   useEffect(() => {
-    startTimer();
+    // startTimer();
 
     return () => {
       clearTimer();
@@ -25,6 +25,8 @@ export default function QuizScreen() {
       onNext();
     }
   }, [time])
+
+  console.log('quiz screen rerender')
  
   return (
     <SafeAreaView style={styles.page}>
@@ -42,10 +44,18 @@ export default function QuizScreen() {
               <Text style={styles.time} onPress={clearTimer}>{time} sec</Text>
             </View>
           ) : (
-            <Card title='Well done'>
-              <Text>Correct answers {score}/{totalQuestions}</Text>
-              <Text>Best score {bestScore}</Text>
-            </Card>
+            <>
+              <LottieView 
+                source={require('../../assets/party.json')} 
+                style={StyleSheet.absoluteFill}
+                autoPlay
+                loop={false}
+              />
+              <Card title='Well done'>
+                <Text>Correct answers {score}/{totalQuestions}</Text>
+                <Text>Best score {bestScore}</Text>
+              </Card>
+            </>
           )
         }
 

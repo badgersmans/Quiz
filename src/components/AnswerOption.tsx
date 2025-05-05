@@ -9,6 +9,7 @@ type AnswerOption = {
 export default function AnswerOption({option}: AnswerOption) {
   const {selectedOption, setSelectedOption} = useQuizContext();
   const isSelected = option === selectedOption
+  console.log('answer option rendered...')
   return (
     <Pressable 
       onPress={() => setSelectedOption(option)}
